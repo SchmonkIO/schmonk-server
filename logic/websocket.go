@@ -7,6 +7,8 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/schmonk.io/schmonk-server/config"
+	"github.com/schmonk.io/schmonk-server/global"
+	"github.com/schmonk.io/schmonk-server/models"
 	"github.com/schmonk.io/schmonk-server/util"
 )
 
@@ -24,5 +26,20 @@ func InitSocket(c *gin.Context) {
 		util.LogToConsole("socket upgrade failed:", err)
 		return
 	}
+	gSlots := global.Players.GetPlayerCount()
+	if gSlots < config.Config.Server.Slots {
+		CreateSocketPlayer(con)
+	} else {
+		con.WriteMessage(1, []byte("Slots exceeded"))
+		con.Close()
+		return
+	}
+}
 
+// CreateSocketPlayer creates the player for the websocket connection
+func CreateSocketPlayer(con *websocket.Conn) {
+	util.LogToConsole("Connected Users:", global.Players.GetPlayerCount())
+	player := models.CreateBasePlayer(con)
+	defer con.Close()
+	PlayerLoop(&player)
 }

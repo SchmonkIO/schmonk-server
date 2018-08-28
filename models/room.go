@@ -1,10 +1,10 @@
 package models
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/schmonk.io/schmonk-server/config"
+	"github.com/schmonk.io/schmonk-server/util"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -47,7 +47,7 @@ func (r *Room) SetName(name string) error {
 		r.Name = name
 		return nil
 	} else {
-		return errors.New("Name to long")
+		return util.ErrNameToLong
 	}
 }
 
@@ -76,7 +76,7 @@ func (r *Room) AddPlayer(player RoomPlayer, pass string) error {
 	if len(r.Players) < r.Slots {
 		if r.Pass != "" {
 			if r.Pass != pass {
-				return errors.New("Password incorrect")
+				return util.ErrPassWrong
 			}
 		}
 		r.Players[player.GetID()] = player
@@ -84,7 +84,7 @@ func (r *Room) AddPlayer(player RoomPlayer, pass string) error {
 		return nil
 	} else {
 		r.Mut.Unlock()
-		return errors.New("No slots available")
+		return util.ErrNoSlots
 	}
 }
 
@@ -106,13 +106,11 @@ func (r *Room) RemovePlayer(player RoomPlayer) error {
 			break
 		}
 		return nil
-	} else {
-		delete(r.Players, player.GetID())
-		if len(r.Players) <= 0 {
-			return errors.New("No players left")
-		} else {
-			return nil
-		}
+	}
+	delete(r.Players, player.GetID())
+	if len(r.Players) <= 0 {
+		return util.ErrNoPlayer
 	}
 	r.Mut.Unlock()
+	return nil
 }

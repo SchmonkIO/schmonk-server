@@ -14,7 +14,7 @@ type RoomPlayer struct {
 func CreateRoomPlayer(bp BasePlayer) RoomPlayer {
 	rp := RoomPlayer{}
 	rp.BasePlayer = bp
-	rp.Color = SetColor()
+	rp.SetColor()
 	return rp
 }
 

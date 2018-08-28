@@ -1,12 +1,11 @@
 package models
 
 import (
-	"errors"
-
 	"github.com/gorilla/websocket"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/schmonk.io/schmonk-server/config"
+	"github.com/schmonk.io/schmonk-server/util"
 )
 
 // BasePlayer is struct for a basic player
@@ -46,6 +45,6 @@ func (bp *BasePlayer) SetName(name string) error {
 		bp.Name = name
 		return nil
 	} else {
-		return errors.New("Name to long")
+		return util.ErrNameToLong
 	}
 }
