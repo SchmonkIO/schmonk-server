@@ -2,19 +2,21 @@ package actions
 
 import (
 	"encoding/json"
-	
+
 	"github.com/schmonk.io/schmonk-server/global"
 	"github.com/schmonk.io/schmonk-server/models"
 	"github.com/schmonk.io/schmonk-server/util"
 )
 
-type JoinAction struct {
+// SetUserAction is the action to set a users name and register the user at the server
+type SetUserAction struct {
 	models.BaseAction
 	Name string `json:"name"`
 }
 
-func Join(player *models.BasePlayer, message []byte, mt int) {
-	data := JoinAction{}
+// SetUser gets called to register a new user
+func SetUser(player *models.BasePlayer, message []byte, mt int) {
+	data := SetUserAction{}
 	err := json.Unmarshal(message, &data)
 	if err != nil {
 		util.LogToConsole(err.Error())
@@ -23,5 +25,6 @@ func Join(player *models.BasePlayer, message []byte, mt int) {
 	}
 	player.Name = data.Name
 	global.Players.AddPlayer(player)
+	player.Connection.WriteMessage(mt, []byte("set user"))
 	util.LogToConsole("Connected Players:", global.Players.GetPlayerCount())
 }

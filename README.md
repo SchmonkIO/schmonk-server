@@ -27,3 +27,14 @@ Debug = true
 NameLength = 16
 SlotsPerRoom = 10
 ```
+
+## Actions
+
+- SetUser: 
+    - `{"action":"setUser","name":"..."}`
+- GetRooms:
+    - `{"action":"getRooms"}`
+- CreateRoom:
+    - `{"action":"createRoom","name":"...","Pass":"","Map":"","Slots":4}`
+- JoinRoom:
+    - `{"action":"joinRoom","id":"...","pass":""}`

@@ -44,7 +44,6 @@ func (bp *BasePlayer) SetName(name string) error {
 	if len(name) <= config.Config.Game.NameLength {
 		bp.Name = name
 		return nil
-	} else {
-		return util.ErrNameToLong
 	}
+	return util.ErrNameToLong
 }

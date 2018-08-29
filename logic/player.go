@@ -8,6 +8,7 @@ import (
 	"github.com/schmonk.io/schmonk-server/util"
 )
 
+// PlayerLoop handles every websocket message and calls appropriate functions
 func PlayerLoop(player *models.BasePlayer) {
 	for {
 		mt, message, err := player.Connection.ReadMessage()
@@ -23,21 +24,43 @@ func PlayerLoop(player *models.BasePlayer) {
 			break
 		}
 		if player.Name == "" {
-			//Naming Action -> Init player complete
 			baseAction := models.BaseAction{}
 			err := baseAction.Unmarshal(message)
 			if err != nil {
 				player.Connection.WriteMessage(mt, []byte("wrong json format"))
-			} else {
-				if baseAction.Check("join") {
-					actions.Join(player, message, mt)
-				} else {
-					player.Connection.WriteMessage(mt, []byte("set name first"))
-				}
+				return
 			}
+			if !baseAction.Check("setUser") {
+				player.Connection.WriteMessage(mt, []byte("set name first"))
+				return
+			}
+			actions.SetUser(player, message, mt)
 		} else {
-			//Action choosing
-			util.LogToConsole("Done did it!")
+			ActionChooser(player, message, mt)
 		}
+	}
+}
+
+// ActionChooser handles every action per player and calls corresponding functions
+func ActionChooser(player *models.BasePlayer, message []byte, mt int) {
+	baseAction := models.BaseAction{}
+	err := baseAction.Unmarshal(message)
+	if err != nil {
+		player.Connection.WriteMessage(mt, []byte("wrong json format"))
+		return
+	}
+	switch baseAction.Action {
+	case "createRoom":
+		util.LogToConsole("createRoom")
+		actions.CreateRoom(player, message, mt)
+	case "getRooms":
+		util.LogToConsole("getRooms")
+		actions.GetRooms(player, mt)
+	case "joinRoom":
+		util.LogToConsole("joinRoom")
+		actions.JoinRoom(player, message, mt)
+	default:
+		util.LogToConsole("Not implemented")
+		player.Connection.WriteMessage(mt, []byte("action not implemented"))
 	}
 }

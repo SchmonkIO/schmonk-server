@@ -11,8 +11,8 @@ var Players PlayerList
 
 // PlayerList is a struct for a list of BasePlayers
 type PlayerList struct {
-	Players map[string]*models.BasePlayer
-	Mut     *sync.Mutex
+	Players map[string]*models.BasePlayer `json:"players"`
+	Mut     *sync.Mutex                   `json:"-"`
 }
 
 func CreateGlobalPlayerList() {
