@@ -27,12 +27,12 @@ func PlayerLoop(player *models.BasePlayer) {
 			baseAction := models.BaseAction{}
 			err := baseAction.Unmarshal(message)
 			if err != nil {
-				player.Connection.WriteMessage(mt, []byte("wrong json format"))
-				return
+				models.SendJsonResponse(false, "invalid json", mt, player)
+				continue
 			}
 			if !baseAction.Check("setUser") {
-				player.Connection.WriteMessage(mt, []byte("set name first"))
-				return
+				models.SendJsonResponse(false, "set name first", mt, player)
+				continue
 			}
 			actions.SetUser(player, message, mt)
 		} else {
@@ -46,7 +46,7 @@ func ActionChooser(player *models.BasePlayer, message []byte, mt int) {
 	baseAction := models.BaseAction{}
 	err := baseAction.Unmarshal(message)
 	if err != nil {
-		player.Connection.WriteMessage(mt, []byte("wrong json format"))
+		models.SendJsonResponse(false, "invalid json", mt, player)
 		return
 	}
 	switch baseAction.Action {
@@ -61,6 +61,6 @@ func ActionChooser(player *models.BasePlayer, message []byte, mt int) {
 		actions.JoinRoom(player, message, mt)
 	default:
 		util.LogToConsole("Not implemented")
-		player.Connection.WriteMessage(mt, []byte("action not implemented"))
+		models.SendJsonResponse(false, "action not implemented", mt, player)
 	}
 }

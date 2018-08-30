@@ -30,6 +30,13 @@ func (rl *RoomList) Marshal() ([]byte, error) {
 	return bytes, err
 }
 
+func (rl *RoomList) GetRooms() map[string]*models.Room {
+	rl.Mut.Lock()
+	rooms := rl.Rooms
+	rl.Mut.Unlock()
+	return rooms
+}
+
 // AddRoom adds a room to the global room list
 func (rl *RoomList) AddRoom(room *models.Room) {
 	rl.Mut.Lock()

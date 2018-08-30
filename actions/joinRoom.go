@@ -19,14 +19,14 @@ func JoinRoom(player *models.BasePlayer, message []byte, mt int) {
 	err := json.Unmarshal(message, &data)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		player.Connection.WriteMessage(mt, []byte("invalid json"))
+		models.SendJsonResponse(false, "invalid json", mt, player)
 		return
 	}
 	err = global.Rooms.AddPlayer(data.Id, data.Pass, player)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		player.Connection.WriteMessage(mt, []byte("invalid room password"))
+		models.SendJsonResponse(false, "invalid room password", mt, player)
 		return
 	}
-	player.Connection.WriteMessage(mt, []byte("joined room"))
+	models.SendJsonResponse(true, "joined room", mt, player)
 }

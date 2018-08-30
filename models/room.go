@@ -90,20 +90,20 @@ func (r *Room) SetSlots(quantity int) error {
 // AddPlayer adds a new player to the room
 func (r *Room) AddPlayer(player *BasePlayer, pass string) error {
 	r.Mut.Lock()
-	if len(r.Players) < r.Slots {
-		if r.Pass != "" {
-			if r.Pass != pass {
-				r.Mut.Unlock()
-				return util.ErrPassWrong
-			}
-		}
-		rp := CreateRoomPlayer(*player)
-		r.Players[player.GetID()] = rp
+	if len(r.Players) >= r.Slots {
 		r.Mut.Unlock()
-		return nil
+		return util.ErrNoSlots
 	}
+	if r.Pass != "" {
+		if r.Pass != pass {
+			r.Mut.Unlock()
+			return util.ErrPassWrong
+		}
+	}
+	rp := CreateRoomPlayer(*player)
+	r.Players[player.GetID()] = rp
 	r.Mut.Unlock()
-	return util.ErrNoSlots
+	return nil
 }
 
 // GetPlayerCount returns the number of players in the room

@@ -23,21 +23,21 @@ func CreateRoom(player *models.BasePlayer, message []byte, mt int) {
 	err := json.Unmarshal(message, &data)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		player.Connection.WriteMessage(mt, []byte("invalid json"))
+		models.SendJsonResponse(false, "invalid json", mt, player)
 		return
 	}
 	r, err := models.CreateRoom(data.Name, data.Pass, player.GetID(), data.Slots)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		player.Connection.WriteMessage(mt, []byte(err.Error()))
+		models.SendJsonResponse(false, err.Error(), mt, player)
 		return
 	}
 	err = r.AddPlayer(player, data.Pass)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		player.Connection.WriteMessage(mt, []byte(err.Error()))
+		models.SendJsonResponse(false, err.Error(), mt, player)
 		return
 	}
 	global.Rooms.AddRoom(&r)
-	player.Connection.WriteMessage(mt, []byte("created room"))
+	models.SendJsonResponse(true, "created room", mt, player)
 }
