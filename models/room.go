@@ -100,7 +100,7 @@ func (r *Room) AddPlayer(player *BasePlayer, pass string) error {
 			return util.ErrPassWrong
 		}
 	}
-	rp := CreateRoomPlayer(*player)
+	rp := CreateRoomPlayer(*player, &r.ID)
 	r.Players[player.GetID()] = rp
 	r.Mut.Unlock()
 	return nil

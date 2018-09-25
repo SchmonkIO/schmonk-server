@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/schmonk.io/schmonk-server/models"
+	"github.com/schmonk.io/schmonk-server/util"
 )
 
 // Rooms is a list of all available rooms
@@ -62,12 +63,28 @@ func (rl *RoomList) GetRoom(rID string) models.Room {
 func (rl *RoomList) AddPlayer(rID, pass string, player *models.BasePlayer) error {
 	rl.Mut.Lock()
 	r := rl.Rooms[rID]
+	rl.Mut.Unlock()
+	if r == nil {
+		return util.ErrRoomNotFound
+	}
 	err := r.AddPlayer(player, pass)
 	if err != nil {
-		rl.Mut.Unlock()
 		return err
 	}
-	rl.Rooms[rID] = r
+	return nil
+}
+
+func (rl *RoomList) RemovePlayer(player *models.RoomPlayer) error {
+	rl.Mut.Lock()
+	r := rl.Rooms[player.RoomID.Hex()] // Get Room ID somehow
 	rl.Mut.Unlock()
+	if r == nil {
+		return util.ErrRoomNotFound
+	}
+	err := r.RemovePlayer(*player)
+	if err != nil {
+		return err
+	}
+	player.RoomID = nil
 	return nil
 }

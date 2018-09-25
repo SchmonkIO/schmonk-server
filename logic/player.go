@@ -23,7 +23,7 @@ func PlayerLoop(player *models.BasePlayer) {
 			}
 			break
 		}
-		if player.Name == "" {
+		if player.State == util.StateUndefined {
 			baseAction := models.BaseAction{}
 			err := baseAction.Unmarshal(message)
 			if err != nil {
@@ -35,8 +35,11 @@ func PlayerLoop(player *models.BasePlayer) {
 				continue
 			}
 			actions.SetUser(player, message, mt)
-		} else {
+		} else if player.State != util.StateUndefined {
 			ActionChooser(player, message, mt)
+		} else {
+			models.SendJsonResponse(false, "invalid player state", mt, player)
+			continue
 		}
 	}
 }
@@ -51,14 +54,33 @@ func ActionChooser(player *models.BasePlayer, message []byte, mt int) {
 	}
 	switch baseAction.Action {
 	case "createRoom":
+		if player.State != util.StateRoomList {
+			models.SendJsonResponse(false, "action not possible at this state", mt, player)
+			return
+		}
 		util.LogToConsole("createRoom")
 		actions.CreateRoom(player, message, mt)
 	case "getRooms":
+		if player.State != util.StateRoomList {
+			models.SendJsonResponse(false, "action not possible at this state", mt, player)
+			return
+		}
 		util.LogToConsole("getRooms")
 		actions.GetRooms(player, mt)
 	case "joinRoom":
+		if player.State != util.StateRoomList {
+			models.SendJsonResponse(false, "action not possible at this state", mt, player)
+			return
+		}
 		util.LogToConsole("joinRoom")
 		actions.JoinRoom(player, message, mt)
+	case "leaveRoom":
+		if player.State == util.StateLobby || player.State == util.StateReady || player.State == util.StatePlaying {
+			util.LogToConsole("leaveRoom")
+			actions.JoinRoom(player, message, mt)
+		}
+		models.SendJsonResponse(false, "action not possible at this state", mt, player)
+		return
 	default:
 		util.LogToConsole("Not implemented")
 		models.SendJsonResponse(false, "action not implemented", mt, player)

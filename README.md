@@ -38,3 +38,5 @@ SlotsPerRoom = 10
     - `{"action":"createRoom","name":"...","Pass":"","Map":"","Slots":4}`
 - JoinRoom:
     - `{"action":"joinRoom","id":"...","pass":""}`
+- LeaveRoom:
+    - `{"action":"leaveRoom"}`

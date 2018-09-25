@@ -14,6 +14,7 @@ type BasePlayer struct {
 	Name string        `json:"name"`
 	//Status     string          `json:"status"`
 	Connection *websocket.Conn `json:"-"`
+	State      int             `json:"state"`
 }
 
 // CreateBasePlayer creates and returns a new basic players
@@ -37,6 +38,11 @@ func (bp *BasePlayer) SetID() {
 // SetConnection sets the websocket connection for the player
 func (bp *BasePlayer) SetConnection(con *websocket.Conn) {
 	bp.Connection = con
+}
+
+// SetState sets the state of the player
+func (bp *BasePlayer) SetState(newState int) {
+	bp.State = newState
 }
 
 // SetName sets the name for the player

@@ -5,12 +5,12 @@ import (
 )
 
 type StatusResponse struct {
-	Status  bool   `json:"stauts"`
+	Status  bool   `json:"status"`
 	Message string `json:"message"`
 }
 
 type StatusResponseRoomList struct {
-	Status  bool     `json:"stauts"`
+	Status  bool     `json:"status"`
 	Message RoomList `json:"message"`
 }
 

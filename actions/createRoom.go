@@ -39,5 +39,6 @@ func CreateRoom(player *models.BasePlayer, message []byte, mt int) {
 		return
 	}
 	global.Rooms.AddRoom(&r)
+	player.SetState(util.StateLobby)
 	models.SendJsonResponse(true, "created room", mt, player)
 }

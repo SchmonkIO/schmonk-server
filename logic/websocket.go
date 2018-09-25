@@ -40,6 +40,7 @@ func InitSocket(c *gin.Context) {
 func CreateSocketPlayer(con *websocket.Conn) {
 	util.LogToConsole("Connected Players:", global.Players.GetPlayerCount())
 	player := models.CreateBasePlayer(con)
+	player.State = util.StateUndefined
 	defer con.Close()
 	PlayerLoop(&player)
 }
