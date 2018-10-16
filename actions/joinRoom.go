@@ -20,20 +20,20 @@ func JoinRoom(player *models.BasePlayer, message []byte, mt int) {
 	err := json.Unmarshal(message, &data)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		models.SendJsonResponse(false, "invalid json", mt, player)
+		models.SendJsonResponse(false, util.ActionJoinRoom, "invalid json", mt, player)
 		return
 	}
 	err = global.Rooms.AddPlayer(data.Id, data.Pass, player)
 	if err != nil {
 		if err == util.ErrRoomNotFound {
 			util.LogToConsole(err.Error())
-			models.SendJsonResponse(false, err.Error(), mt, player)
+			models.SendJsonResponse(false, util.ActionJoinRoom, err.Error(), mt, player)
 			return
 		}
 		util.LogToConsole(err.Error())
-		models.SendJsonResponse(false, "invalid room password", mt, player)
+		models.SendJsonResponse(false, util.ActionJoinRoom, "invalid room password", mt, player)
 		return
 	}
 	player.SetState(util.StateLobby)
-	models.SendJsonResponse(true, "joined room", mt, player)
+	models.SendJsonResponse(true, util.ActionJoinRoom, "joined room", mt, player)
 }

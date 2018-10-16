@@ -20,12 +20,12 @@ func SetUser(player *models.BasePlayer, message []byte, mt int) {
 	err := json.Unmarshal(message, &data)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		models.SendJsonResponse(false, "invalid json", mt, player)
+		models.SendJsonResponse(false, util.ActionSetUser, "invalid json", mt, player)
 		return
 	}
 	player.Name = data.Name
 	player.SetState(util.StateRoomList)
 	global.Players.AddPlayer(player)
-	models.SendJsonResponse(true, "set user", mt, player)
+	models.SendJsonResponsePlayeriD(true, util.ActionSetUser, player.GetID(), mt, player)
 	util.LogToConsole("Connected Players:", global.Players.GetPlayerCount())
 }

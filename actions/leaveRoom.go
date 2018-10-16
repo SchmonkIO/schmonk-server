@@ -17,15 +17,15 @@ func LeaveRoom(player *models.RoomPlayer, message []byte, mt int) {
 	err := json.Unmarshal(message, &data)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		models.SendJsonResponse(false, "invalid json", mt, &player.BasePlayer)
+		models.SendJsonResponse(false, util.ActionLeaveRoom, "invalid json", mt, &player.BasePlayer)
 		return
 	}
 	err = global.Rooms.RemovePlayer(player)
 	if err != nil {
 		util.LogToConsole(err.Error())
-		models.SendJsonResponse(false, err.Error(), mt, &player.BasePlayer)
+		models.SendJsonResponse(false, util.ActionLeaveRoom, err.Error(), mt, &player.BasePlayer)
 		return
 	}
 	player.SetState(util.StateRoomList)
-	models.SendJsonResponse(true, "left room", mt, &player.BasePlayer)
+	models.SendJsonResponse(true, util.ActionLeaveRoom, "left room", mt, &player.BasePlayer)
 }
